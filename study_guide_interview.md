@@ -278,7 +278,7 @@ OOP may be understood in terms of creating healthy relationships between data, e
     tom = FootballPlayer.new 
 
     tom.play_sport # method lookup : [FootballPlayer, Athlete] 
-    ``` 
+  ``` 
 
   ### Examples with interface inheritance 
 
@@ -286,9 +286,18 @@ OOP may be understood in terms of creating healthy relationships between data, e
 
 # Instance Variables 
 
+  Instance variables tie data to objects and keep track of the state of individual objects. 
+  - Each instance has its own set of instance variables, and unique state. 
+  - Instance variables are scoped at the object level and can be accessed within instance methods without being passed in or initialized within the instance method. 
+  - Instance variables have a default value of `nil` until initialized
+
 
 
 # Instance Methods 
+
+  Instance methods allow us to expose or manipulate an object's state, and provide an interface to interact with objects. 
+
+  Instance methods are able to access instance variables without passing them in or initializing them within the body of the method. Available to all instances of a class and subclasses.
 
 
 
@@ -304,15 +313,101 @@ OOP may be understood in terms of creating healthy relationships between data, e
 
 # `self` 
 
+  `self` allows us to be explicit as to what we are referencing within a program. `self` has multiple meanings depending on the context in which it is used. 
+
+  - `self` prepended to method definition is how we define class methods or module methods. 
+  - `self` inside of an instance method references the calling object.
+  - `self` inside of a class definition, but outside an instance method references the class itself. 
+  - `self` is used to call setter methods within instance methods to disambiguate from creating local       variables. 
+
 
 # Class Methods 
 
 
 # Class Variables 
 
+  Class variables keep track of class level information that does not deal with state of individual instances of the class. Class variables are prepended with `@@` and each instance of the class shares one copy of the class variable. 
+  
+  Scope: class variables are scoped at the class level, and are available within class methods and instance methods. Class variables may be reassigned within instance methods.
+
+  ### Inheritance and Class Variables
+
+    - Avoid class variables when working with inheritance as unexpected behavior may occur as a result of unintentional mutation or reassignment of class variables by subclasses or instances of subclasses. 
+    - All instances of the class share one copy of the class variable as well as all subclasses and instances of subclasses. 
+    = class variable may be unintentionally reassigned anywhere within the inheritance hierarchy, leading to unexpected behavior as any changes to the class variable within the inheritance hierarchy will be reflected throughout as we are manipulating on the same object referenced by the class variable. 
+
+
+  ```ruby 
+  class Fruit
+    @@number_of_fruits = 0 
+
+    def initialize
+      @@number_of_fruits += 1
+    end 
+
+    def self.number_of_fruits
+      @@number_of_fruits
+    end 
+  end 
+
+  class Apple < Fruit 
+    def make_applesauce(num)
+      @@number_of_fruits -= num
+    end 
+  end 
+
+  puts Fruit.number_of_fruits    # => 0 
+
+  apple = Fruit.new 
+  pear = Fruit.new 
+  fig = Fruit.new 
+
+  puts Fruit.number_of_fruits
+
+  green = Apple.new
+
+  puts Fruit.number_of_fruits
+
+  green.make_applesauce(2)
+
+  puts Fruit.number_of_fruits
+  ```
+
+
 
 # Constants 
+- Information that does not change. 
+- Scoped lexically
+  - Code construct surrounding the reference determines its availability. 
 
+```ruby 
+class Fruit 
+  SEEDS = 25 
+
+  def number_of_seeds 
+    SEEDS 
+  end
+  
+  def self.number_of_seeds
+    SEEDS 
+  end 
+end
+
+class Apple < Fruit
+  SEEDS = 10 
+end 
+
+fruit = Fruit.new 
+puts fruit.number_of_seeds   # => 25
+puts Fruit.number_of_seeds   # => 25
+
+smith = Apple.new
+puts smith.number_of_seeds   # => 25 
+```
+
+The last line above is telling, as we'd expect that since it is an `Apple` object calling `number_of_seeds` that `10` would be returned, as the constant `SEEDS` references  `10` in the `Apple` class. However, because constants are scoped lexically, and the `number_of_seeds` instance method is utilized via class inheritance, when Ruby resolves the constant `SEEDS` in the body of the `number_of_seeds` method, it searches the lexical scope of the reference, irrespective of the calling object's class. 
+
+In resolving constants, Ruby will first search lexically, then move to the superclass, and finally search the top level scope. Since the reference is located within the `Fruit#number_of_seeds` method, Ruby finds the constant `SEEDS` within the `Fruit` class and returns it. 
 
 # to_s 
 
@@ -324,12 +419,58 @@ OOP may be understood in terms of creating healthy relationships between data, e
 ### Class inheritance 
 
 ### Interface inheritance 
+  Instead of inheriting behavior from a superclass, the class inherits an interface made available by mixed in module defining the behavior. Interface inheritance is best used when there is not a natural hierarchical relationship, and rather a "has-a" relationship between objects of the class, and the behavior. Interface inheritance allows us to share behavior between classes when there is not a hierarchical relationship which lends itself to class inheritance. Interface inheritance also approximates multiple inheritance in Ruby. Objects cannot be instantiated from modules. 
 
 ### Scoping implications 
 
 
 
 # `super` keyword
+
+  `super` is used to access methods from earlier in the method lookup path. `super` allows objects to access superclass behavior. 
+
+  ### Arguments and `super` 
+
+  By default `super` will forward all arguments passed in to the method within which `super` is called to the method defined in the superclass. In order to pass no arguments, we use `super()` and we are able to specify which arguments to pass to the superclass method by passing them in as arguments to `super`. 
+
+  ```ruby 
+  class Athlete 
+    def play_sport
+      "I'm playing my sport"
+    end 
+  end 
+
+  class Golfer < Athlete 
+    def play_sport 
+      super + ", which is golf."
+    end 
+  end 
+
+  tiger = Golfer.new
+  puts tiger.play_sport   # => I'm playing my sport, which is golf.
+  ```
+
+  ```ruby 
+  class Student 
+    attr_reader :name, :age 
+
+    def initialize(name, age)
+      @name = name 
+      @age = age 
+    end 
+  end 
+
+  class LaunchStudent < Student 
+    def initialize(name, age, course)
+      super(name, age)
+      @course = course 
+    end 
+  end 
+
+  lawton = LaunchStudent.new('Lawton', 34, 'RB129')
+
+  p lawton    # => #<LaunchStudent:0x00000001100683b0 @name="Lawton", @age=34, @course="RB129">
+  ```
 
 
 
@@ -346,9 +487,51 @@ OOP may be understood in terms of creating healthy relationships between data, e
 
 
 # Collaborator Objects 
+  Collaborator objects are objects that are stored as part of another object's state. Collaborator objects allow two or more objects to work together in order to accomplish a particular task. Collaborator objects may be of any type, but typically are custom objects. 
+
+  ```ruby 
+class Recipe 
+  attr_reader :ingredients, :steps
+  
+  def initialize
+    @ingredients = []
+    @steps = '' 
+  end 
+
+  def add_ingredient(ingredient)
+    ingredients << ingredient
+  end 
+
+  def print_ingredients 
+    ingredients.each { |ingredient| puts ingredient.type }
+  end
+end 
+
+class Fruit 
+  attr_reader :type
+  
+  def initialize(type)
+    @type = type 
+  end 
+end 
+
+pie = Recipe.new 
+apple = Fruit.new('Apple')
+
+pie.add_ingredient(apple)
+
+pie.print_ingredients     # => Apple 
+
+p pie.ingredients      # => [#<Fruit:0x0000000101912ec0 @type="Apple">]
+```
+
+The `Recipe` object `pie` and the `Fruit` object `apple` are collaborator objects, as the `Recipe` object stores the `Fruit` object as state within instance variable `@ingredients` in order to accomplish a task of creating a recipe. 
 
 
 # Equivalence and Fake Operators 
+
+  - `BasicObject#==` asks whether objects being compared are the same object
+  - Classes should define their own `==` method to provide more meaningful comparison.
 
 
 
