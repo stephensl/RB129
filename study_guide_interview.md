@@ -97,36 +97,188 @@ OOP may be understood in terms of creating healthy relationships between data, e
 
   ### Polymorphism 
 
+  Polymorphism is ability of data of different types to respond to a common interface. Essentially, polymorphic behavior is present when we invoke the same method call on objects of different classes, and they exhibit behavior (usually) in different ways. Polymorphism allows for code reusability, enabling DRY code, and allows programmer to work on a higher level of abstraction as we are not concerned with the class of the object, or implementation details of the method call, only that it can respond to the method call. In order for polymorphism to be present, code must be written in a polymorphic manner. 
+
+  Polymorphism in Ruby is achieved through 3 main avenues: 
+
+  - Class inheritance 
+    - One class inherits behavior of another class (superclass)
+    - subclass specializes the superclass 
+    - natural hierarchical relationship 
+
+  ```ruby 
+  class Athlete
+    def play_sport 
+      "I'm playing my sport"
+    end 
+  end 
+
+  class FootballPlayer < Athlete ; end 
+
+  tom = Athlete.new 
+  bill = FootballPlayer.new 
+
+  [tom, bill].each { |object| puts object.play_sport }
+  ```
+
+  - Interface inheritance 
+    - Instead of one class inheriting from another, access shared behavior through mixing in interface
+    - Non-hierarchical relationship between classes 
+    - Methods defined in modules adn mixed in to relevant classes
+
+  ```ruby 
+  module Throwable 
+    def throw_ball
+      "Throwing the ball!"
+    end 
+  end 
+
+  class Athlete ; end 
+
+  class FootballPlayer < Athlete
+    include Throwable 
+  end 
+
+  class BaseballPlayer < Athlete
+    include Throwable 
+  end 
+  
+  class Swimmer < Athlete ; end 
+
+  tom = FootballPlayer.new
+  derek = BaseballPlayer.new 
+
+  [tom, derek].each { |object| puts object.throw_ball }
+  ```
+  - Duck typing 
+    - When two or more unrelated data types can respond to the same method call
+    - Informal way of grouping objects based on ability to respond to common interface
+    - Not concerned with object type, only its ability to respond to method call.
+    - Behavior is manifested based on definition of method in each class.
+
+  ```ruby 
+  class FootballPlayer 
+    def throw
+      "Throwing the football" 
+    end 
+  end 
+
+  class Potter 
+    def throw 
+      "Throwing clay" 
+    end 
+  end 
+
+  tom = FootballPlayer.new 
+  harry = Potter.new 
+
+  [tom, harry].each { |object| puts object.throw}
+  ``` 
+
+ 
   ### Inheritance 
+    - One way to implement polymorphism in Ruby
+    - Behaviors can be shared between classes via inheritance. 
+      - class inheritance 
+      - interface inheritance 
 
 
 
 
 # Classes and Objects 
+  - Classes act as blueprints for objects, in that they define what an object of the class will be made of (attributes), and what it will be capable of doing (behaviors). 
 
+  - Objects are instances of classes, and have access to shared behaviors defined in the class
+  - Objects encapsulate state: comprised of its instance variables and their values 
+  - Each object has shared behavior and unique state. 
 
   ### Instantiation 
+    - Process of creating objects from classes. 
+    - Class method `new` is invoked on the class, and a new instance of the class is returned. 
+    - `new` triggers the instance method `initialize` if defined in the class. 
   
   ### State 
+    - Made up of an object's instance variables and their values 
+    - Each object has a unique state.
+    - Instance variables keep track of state of individual objects. 
   
   ### Behavior 
+    - What objects are capable of (methods available to objects)
+    - Behavior is shared among all objects instantiated from a class. 
+    - Behavior is inherited from a superclass/module or defined in the class itself. 
+    - Objects manifest behavior through instance methods.
 
   
 
 
 # Modules 
+  Modules perform three basic functions in Ruby. 
 
   ### Mixins
+    - Another way (besides class inheritance) to implement shared behavior.
+    - Module may contain methods that extend functionality of classes by mixing the module into relevant classes via the `include` method. 
 
   ### Namespacing 
+    - Way of organizing code
+      - Similar classes or methods can be stored in modules 
+      - Reduces likelihood of collisions between class or method names in the codebase
+  
+    ```ruby 
+    module Athlete 
+      class Swimmer ; end 
+
+      class FootballPlayer ; end 
+
+      class Golfer ; end 
+    end 
+
+    tom = Athlete::Swimmer.new 
+  ```
 
   ### Module methods 
+    - Methods that may not fit elsewhere in the codebase but still serve important function.
+    - Invoked directly on module itself 
+
+    ```ruby 
+    module Calculation
+      def self.double(num)
+        num * 2 
+      end 
+    end 
+
+    Calculation.double(10)   # => 20 
+    ``` 
+
 
 
 
 # Method lookup path 
+  - Order in which Ruby seeks to resolve method calls.
+  - Generally 
+    - class of calling object 
+    - any modules mixed in to calling object class (last included to first included)
+    - superclass 
+    - any modules mixed in to superclass (last included to first included)
+    - Object 
+    - Kernel
+    - BasicObject
+
 
   ### Examples with class inheritance 
+  
+  ```ruby 
+    class Athlete
+      def play_sport 
+        "Playing my sport"
+      end 
+    end 
+
+    class FootballPlayer < Athlete ; end 
+
+    tom = FootballPlayer.new 
+
+    tom.play_sport # method lookup : [FootballPlayer, Athlete] 
+    ``` 
 
   ### Examples with interface inheritance 
 
