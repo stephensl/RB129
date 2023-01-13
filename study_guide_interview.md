@@ -415,8 +415,11 @@ In resolving constants, Ruby will first search lexically, then move to the super
 
 
 # Inheritance 
+  May be used to extract common behavior that exists between classes and move that behavior to a superclass that subclasses inherit from. One way polymorphism is achieved in Ruby. 
+  
 
 ### Class inheritance 
+  When a class inherits behavior from a superclass. The subclass specializes the superclass, and is best used when there is a hierarchical relationship between classes. 
 
 ### Interface inheritance 
   Instead of inheriting behavior from a superclass, the class inherits an interface made available by mixed in module defining the behavior. Interface inheritance is best used when there is not a natural hierarchical relationship, and rather a "has-a" relationship between objects of the class, and the behavior. Interface inheritance allows us to share behavior between classes when there is not a hierarchical relationship which lends itself to class inheritance. Interface inheritance also approximates multiple inheritance in Ruby. Objects cannot be instantiated from modules. 
@@ -476,12 +479,16 @@ In resolving constants, Ruby will first search lexically, then move to the super
 
 
 # Method Access Control 
+  Allowing or restricting access to behavior through the use of access modifiers. Example of encapsulation as we're able to hide code within the class, and make decisions about where it should be made available throughout the rest of the program. 
 
 ### Public 
+  Provide the public interface for interacting with objects of the class. These are methods that are available throughout the program. Instance methods are public by default, aside from "constructor" method, `initialize`. 
 
 ### Private 
+  Methods only able to be accessed from within the class itself, and only able to be invoked on the current object (`self`). 
 
 ### Protected 
+  Similar to private methods, protected methods are not available outside of the class but provide greater flexibility as they can be accessed by all instances of the class, not only `self`. 
 
 
 
