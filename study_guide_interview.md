@@ -282,6 +282,33 @@ OOP may be understood in terms of creating healthy relationships between data, e
 
   ### Examples with interface inheritance 
 
+  ```ruby 
+  module Cookable 
+    def cook
+      "I am still delicious!"
+    end 
+  end 
+  
+  class Fruit 
+    def initialize(variety) 
+      @variety = variety 
+    end 
+  end 
+
+  class Watermelon < Fruit ; end 
+
+  class Pineapple < Fruit
+    include Cookable 
+  end 
+
+  pineapple = Pineapple.new('Golden')
+  melon = Watermelon.new('Seedless')
+
+  pineapple.cook # method lookup: [Pineapple, Cookable]
+
+  melon.cook # [Watermelon, Fruit, Object, Kernel, BasicObject] # => NoMethod Error
+  ```
+
 
 
 # Instance Variables 
@@ -303,10 +330,14 @@ OOP may be understood in terms of creating healthy relationships between data, e
 
 
 # Accessor Methods 
+  Each object encapsulates its own state, and we are unable to access information about an object's state without utilizing an interface with which to do so. Accessor methods provide an interface to expose, set, or change information about an object's state. 
 
 ### Getter 
+  Expose information about an object's state, more precisely the values held by the object's instance variables. Getter methods may be defined explicitly within the class or by utilizing the shorthand `attr_reader` method. 
 
 ### Setter 
+  Allow for the setting or changing of values assigned to instance variables. May be defined explicitly or using shorthand `attr_reader` method. 
+  Setter methods always return the value that was passed in as an argument regardless of what else may occur within the method. 
 
 
 
@@ -318,10 +349,13 @@ OOP may be understood in terms of creating healthy relationships between data, e
   - `self` prepended to method definition is how we define class methods or module methods. 
   - `self` inside of an instance method references the calling object.
   - `self` inside of a class definition, but outside an instance method references the class itself. 
-  - `self` is used to call setter methods within instance methods to disambiguate from creating local       variables. 
+  - `self` is used to call setter methods within instance methods to disambiguate from creating local variables. 
 
 
 # Class Methods 
+  Class methods are behaviors defined on the class itself, and exhibit class level behavior that is unique to the class rather than individual objects. 
+  Class methods may be invoked directly on the class, and cannot be invoked by instances of the class. Class methods are defined by prepending `self` to the method definition.
+  Useful when method does not need to deal with state of individual objects. 
 
 
 # Class Variables 
@@ -410,6 +444,9 @@ The last line above is telling, as we'd expect that since it is an `Apple` objec
 In resolving constants, Ruby will first search lexically, then move to the superclass, and finally search the top level scope. Since the reference is located within the `Fruit#number_of_seeds` method, Ruby finds the constant `SEEDS` within the `Fruit` class and returns it. 
 
 # to_s 
+  By default, `Object#to_s` returns the name of the class, and an encoding of the object id. It is recommended to define a custom `to_s` method in each class in order to output more useful information based on the class. 
+
+  The `puts` method automatically calls `to_s` on its argument, as does string interpolation. 
 
 
 
