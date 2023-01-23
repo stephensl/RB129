@@ -205,7 +205,34 @@ end
 
 # Modules 
 
+Modules are similare to classes in that they may contain shared behavior, but differ in the fact that we cannot instantiate objects from modules. 
 
+Modules serve three primary functions in Ruby:
+
+### Module Mixins (interface inheritance)
+We are able to extend the functionality of classes by mixing in modules which define behaviors relevant to the class. 
+
+```ruby 
+module Flyable
+  def fly 
+    @can_fly = true 
+  end 
+end 
+
+class Bird 
+  include Flyable 
+end 
+
+jay = Bird.new 
+jay.fly 
+p jay   # => #<Bird:0x000001ac2b275b18 @can_fly=true>
+```
+In the example above, we give the `Bird` object the ability to fly by mixing in the `Flyable` module. However, the `fly` method must be invoked in order to initialize the instance variable `@can_fly`. Simply including the module, but failing to invoke the `fly` method would never initialize the `@can_fly` instance variable, and it would not be added to its state. 
+
+### Namespacing 
+Namespacing utilizes modules to organize similar classes in order to reduce likelihood of collisions within the codebase. Namespacing allows for improved organization of code, and enables programmer to reference classes and behaviors with greater specificity. 
+
+```ruby 
 
 
 
