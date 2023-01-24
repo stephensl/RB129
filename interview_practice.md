@@ -192,7 +192,9 @@ In the example above, we instantiate a new `Fruit` object by invoking the `new` 
 
 # Classes
 
-Classes act as blueprints for objects, in that they determine what objects of the class will be made of (attributes) and what they will be capable of doing (behaviors). Objects instantiated from classes encapsulate their own unique state, which is tracked by the object's instance variables, and has access to shared behaviors defined in the class. Every object is an instance of a class.  
+Classes act as blueprints for objects, in that they determine what objects of the class will be made of (attributes) and what they will be capable of doing (behaviors). Objects instantiated from classes encapsulate their own unique state, which is tracked by the object's instance variables, and has access to shared behaviors defined in the class. Every object is an instance of a class.
+
+When defining classes, we focus on state and behavior. State is specific to each instance of the class and is tracked by the object's instance variables. Behaviors are shared among all instances of the class and are defined as instance methods.
 
 Classes are defined as shown below: 
 ```ruby 
@@ -233,6 +235,68 @@ In the example above, we give the `Bird` object the ability to fly by mixing in 
 Namespacing utilizes modules to organize similar classes in order to reduce likelihood of collisions within the codebase. Namespacing allows for improved organization of code, and enables programmer to reference classes and behaviors with greater specificity. 
 
 ```ruby 
+module Food 
+  class Fruit ; end 
+
+  class Vegetable ; end 
+
+  class Meat ; end 
+end 
+
+apple = Food::Fruit.new    # => #<Food::Fruit:0x000000010731fcd8>
+```
+In the above example, we instantiate a new `Fruit` object, which is nested in the `Food` module. We utilize the namespace resolution operator `::` to access classes contained in the module. 
+
+### Module methods 
+Modules may serve as containers for methods that may not fit elsewhere in the codebase, but serve a useful function. These methods may be invoked directly on the module itself.
+
+To define a module method, we prepend `self` to the method definition. `self` in the context of a module, but outside of an instance method, references the module itself. 
+
+```ruby 
+module Conversion
+  def self.pounds_to_ounces(num)
+    num * 16 
+  end 
+end 
+
+class Freight 
+  attr_reader :weight 
+
+  def initialize(weight)
+    @weight = weight 
+  end 
+end
+
+pack = Freight.new(10)
+
+Conversion.pounds_to_ounces(pack.weight)  # => 160 
+``` 
+We are able to invoke the `Conversion::pounds_to_ounces` method directly on the `Conversion` module in the example above. Module methods do not require instantiation of any objects. 
+
+
+#
+
+
+# Instance variables
+Instance variables allow us to tie data to objects, and keep track of an object's state. Instance variables are scoped at the object level, and are available to instance methods without being passed in or initialized within the method body. 
+
+Each object has its own set of instance variables which track its unique state. Instance variables are not inherited, though instance methods (which may initialize instance variables) are inherited. 
+
+Instance variables differ from local variables in that they have a default value of `nil` prior to being initialized. Instance variables cannot be referenced directly from outside of the class definition, and exposing or manipulating the values of instance variables must be achieved through a defined interface.
+
+
+#
+
+
+# Instance methods 
+Instance methods provide an interface for interacting with objects and allow us to expose or manipulate information about an object's state. Instance methods are shared among all instances of the class in which they are defined, and have access to an object's instance variables. Instance methods define behavior for objects
+
+
+#
+
+
+# Accessor methods 
+
 
 
 
