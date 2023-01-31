@@ -207,7 +207,7 @@ end
 
 # Modules 
 
-Modules are similare to classes in that they may contain shared behavior, but differ in the fact that we cannot instantiate objects from modules. 
+Modules are similar to classes in that they may contain shared behavior, but differ in the fact that we cannot instantiate objects from modules. 
 
 Modules serve three primary functions in Ruby:
 
@@ -289,13 +289,147 @@ Instance variables differ from local variables in that they have a default value
 
 
 # Instance methods 
-Instance methods provide an interface for interacting with objects and allow us to expose or manipulate information about an object's state. Instance methods are shared among all instances of the class in which they are defined, and have access to an object's instance variables. Instance methods define behavior for objects
+Instance methods provide an interface for interacting with objects and allow us to expose or manipulate information about an object's state. Instance methods are shared among all instances of the class in which they are defined, and have access to an object's instance variables. Instance methods define behavior for objects.
 
 
 #
 
 
 # Accessor methods 
+Accessor methods allow us to set, expose, or change information about an object's state.
+
+### Getter method: exposes value assigned to instance variable
+```ruby 
+class Fruit 
+  attr_reader :type    # shorthand getter method (alternative to below)
+
+  def initialize(type)
+    @type = type 
+  end
+
+  def type   # Getter method exposes value assigned to @type
+    @type
+  end 
+end 
+
+banana = Fruit.new("Banana")
+banana.type  # => Banana
+```
+
+### Setter method: set, change value assigned to instance variable.
+  Setter methods always return the value that was passed in as an argument, regardless of what else occurs within the method.
+
+```ruby 
+class Fruit
+  attr_writer :color 
+
+  def initialize(color)
+    @color = color 
+  end 
+
+  def color 
+    @color
+  end 
+
+  def color=(new_color)   # Setter
+    @color = new_color 
+  end 
+end 
+
+apple = Fruit.new('green')
+apple.color       # => green
+apple.color = 'red'   # calling setter method 
+
+# syntactical sugar above is equivalent to apple.color=('red')
+``` 
+
+#
+
+
+# Class Variables 
+Class variables are utilized to keep track of class level information that is not specific to a particular instance. Class variables are available to class methods once they have been initialized. Class variables are accessible to all instances  of the class (and subclasses), and each instance shares one copy of the class variable.
+
+Class variables should not be used when utilizing inheritance as changes to class variables will be reflected throughout the class, its instances, the subclass(es) and their instances. 
+
+```ruby 
+class Athlete 
+  @@headcount = 0 
+
+  def initialize(name)
+    @name = name 
+    @@headcount += 1
+  end 
+
+  def self.headcount 
+    @@headcount 
+  end 
+
+  def how_many_teammates
+    number = @@headcount - 1
+    "There are #{number} other members of my team"
+  end 
+end 
+
+# In the example above we define an `Athlete` class. We include a class variable `@@headcount` that keeps track of the number of athletes that are instantiated from the class. 
+
+puts Athlete.headcount # => 0 
+
+tom = Athlete.new('Tom')
+sandy = Athlete.new('Sandy')
+
+puts Athlete.headcount # => 2
+
+puts tom.how_many_teammates # There are 1 other members of my team.
+```
+
+
+# 
+
+
+# Class Methods 
+Class methods are behaviors specific to the class, and do not deal with state of individual objects instantiated from the class. Class methods expose or manipulate class-level information and are invoked on the class itself. Class methods have access to class variables, once initialized, and do not have access to instance variables or methods. 
+
+In the previous example, `Athlete::headcount` is a class method which exposes class level information. 
+
+
+#
+
+
+# Constants 
+
+
+
+# 
+
+
+# `to_s` method 
+
+`puts` automatically calls `to_s` on its argument to convert the value to a string representation. We can override the `to_s` method to produce useful output relevant to our custom classes. 
+
+```ruby 
+class Fruit 
+  attr_reader :name, :color 
+
+  def initialize(name, color)
+    @name = name 
+    @color = color 
+  end 
+
+  def to_s
+    "I am a(n) #{color} #{name}!"
+  end 
+end 
+
+apple = Fruit.new('apple', 'green')
+puts apple    #=> I am a(n) green apple!
+```
+We created a custom `to_s` method, which overrides the inherited `Object#to_s` method and returns more useful information relevant to the `Fruit` class.
+
+
+# 
+
+
+
 
 
 
