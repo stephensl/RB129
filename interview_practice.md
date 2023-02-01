@@ -396,7 +396,50 @@ In the previous example, `Athlete::headcount` is a class method which exposes cl
 
 
 # Constants 
+Constants may be defined within a class to represent values that do not change. Constants have a lexical scope, meaning that their availability is determined by the code construct surrounding their initialization. 
 
+When a constant is referenced, Ruby resolves the constant in this order:
+  - Lexically
+  - Inheritance hierarchy 
+  - Top level scope 
+
+
+```ruby
+class Mountain 
+  ELEVATION = "Above sea-level"  
+
+  def how_tall
+    ELEVATION
+  end 
+end 
+
+class Rockies < Mountain 
+  ELEVATION = "14,000 ft" 
+end 
+
+class Cascades < Mountain ; end 
+
+rainier = Cascades.new 
+p rainier.how_tall        # => Above sea level
+```
+This is intuitive as the `Cascades` class does not define an `ELEVATION` constant, so Ruby accesses the one defined in the parent class. 
+
+```ruby
+longs = Rockies.new 
+p longs.how_tall          # => Above sea level
+```
+
+This is less intuitive.. why would this code output the string assigned to `Mountain::ELEVATION` constant when the `Rockies` class defines its own `ELEVATION` constant?
+
+This has to do with lexical scope. When we invoke the `how_tall` method on our    `longs` object, Ruby first searches for the `how_tall` method within the class. It does not find it, so next searches the superclass and invokes it. The reference to `ELEVATION` is within the body of the `how_tall` method defined in the `Mountain` class, and due to lexical scoping rules, Ruby will resolve this constant based on the code construct surrounding the reference (the `Mountain` class). 
+
+We could change this code to force reference the class of the calling object by altering the `how_tall` method defined in the `Mountain` class: 
+
+```ruby 
+def how_tall 
+  self.class::ELEVATION 
+end 
+```
 
 
 # 
@@ -429,7 +472,58 @@ We created a custom `to_s` method, which overrides the inherited `Object#to_s` m
 # 
 
 
+# `self` 
+`self` is utilized in Ruby in order to be explicit about what is being referenced in the program. `self` varies depending on where it is used within the source code. 
 
+Use cases for `self` include:
+
+- Defining class methods or module methods
+```ruby 
+class Fruit 
+  def self.what_am_i  # self prepended to method name
+    "I'm a #{self}"   # self inside class method references class
+  end 
+end 
+
+p Fruit.what_am_i     # => "I'm a Fruit"
+
+module Blendable
+  def self.for_smoothie?  # self prepended to method name in module
+    "I am #{self}"        # self references the module here
+  end 
+end
+
+p Blendable.for_smoothie? # => "I am Blendable"
+```
+
+- Calling setter methods within the class 
+```ruby 
+class Fruit 
+  attr_reader :color
+
+  def initialize(color)
+    @color = color 
+  end 
+
+  def change_color(new_color)
+    self.color = new_color    # disambiguate from local variable initialization
+  end 
+
+  private 
+
+  def color=(new_color)
+    @color = new_color
+  end
+end 
+
+apple = Fruit.new('red')
+apple.change_color('green')
+p apple.color # => "green"
+```
+
+- `self` used within an instance method references the calling object 
+
+- `self` used within a class definition, but outside of an instance method references the class itself. 
 
 
 
