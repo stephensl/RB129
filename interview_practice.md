@@ -526,6 +526,358 @@ p apple.color # => "green"
 - `self` used within a class definition, but outside of an instance method references the class itself. 
 
 
+# 
 
 
+# Inheritance
+When one class inherits behavior from another. The inheriting class (subclass) inherits from a parent class (superclass). 
+
+Inheritance is utilized to extract common behaviors from classes that share the behavior and move it to a superclass. 
+
+### Class inheritance 
+One way that we achieve polymorphism in Ruby, is when instead of defining a behavior within a subclass, we are able to access behavior defined in the superclass. 
+
+```ruby 
+class Athlete 
+  def play_sport
+    "I'm playing my sport like a(n) #{self.class}"
+  end 
+end 
+
+class BaseballPlayer < Athlete ; end 
+
+tom = Athlete.new
+
+puts tom.play_sport    # => I'm playing my sport like a(n) Athlete
+
+derrick = BaseballPlayer.new
+
+puts derrick.play_sport # => I'm playing my sport like a(n) BaseballPlayer
+```
+In the example above, instead of explicitly defining a shared behavior (ability to play_sport) in both classes, we access the behavior in the superclass via polymorphism through class inheritance. This is best used if there is a natural hierarchical relationship between classes. In this case, `BaseballPlayer` "is-an" `Athlete` and specializes the `Athlete` class. 
+
+### Interface inheritance 
+Interface inheritance is extending the functionality of a class by extracting a shared behavior to a module, and mixing in the module to relevant classes. This is best used when there is not a natural hierarchical relationship between classes, and there exists a "has-a" relationship between the class and the behavior. 
+
+```ruby
+module Flyable
+  def fly
+    "I am flying like a(n) #{self.class}"
+  end 
+end 
+
+class Bird 
+  def eat 
+    "I am eating" 
+  end
+end 
+
+class Eagle < Bird 
+  include Flyable
+end 
+
+class Hawk < Bird 
+  include Flyable 
+end 
+
+class Ostrich < Bird ; end 
+
+bald = Eagle.new 
+red_tail = Hawk.new
+gary = Ostrich.new 
+
+puts bald.fly # => I am flying like a(n) Eagle
+puts red_tail.fly # => I am flying like a(n) Hawk
+puts gary.fly # => undefined method `fly' for #<Ostrich:0x0000000102bdf0f8> (NoMethodError)
+```
+In the example above, we the `Eagle`, `Hawk`, and `Ostrich` class all inherit from `Bird`, and have access to the shared behavior `eat`. This relationship is modeled hierarchically as the three specialize the `Bird` class as each maintains an "is-a" relationship with the `Bird` class. However, some `Bird`s can fly, while others cannot. Some `Bird`s "have-an" ability to fly, whereas others do not. In order to provide the functionality only to the relevant classes, while maintaining certain shared behaviors modeled in the hierarchical relationship, is to define a shared behavior `fly` within a module `Flyable` and mixing it in via the `include` method only to the classes that implement the behavior, in this case the `Eagle` and `Hawk` "have-an" ability to `fly` whereas an `Ostrich` does not. 
+
+
+# 
+
+
+# `super` 
+The keyword `super` is used in order access behavior from earlier in the method lookup path. By calling `super` within an instance method, Ruby searches for the method of the same name within the inheritance hierarchy of the class, and invokes it. 
+
+`super` handles arguments in the following ways: 
+
+- No arguments given in superclass or subclass: 
+```ruby 
+class Athlete 
+  def play_sport 
+    "I'm playing my sport" 
+  end 
+end 
+
+class BaseballPlayer < Athlete 
+  def play_sport 
+    super + " " + "like a #{self.class}"
+  end 
+end 
+
+bob = BaseballPlayer.new
+puts bob.play_sport  # => I'm playing my sport like a BaseballPlayer
+```
+
+- Single argument in superclass method: 
+```ruby 
+class Athlete
+  def initialize(name)
+    @name = name 
+  end 
+end 
+
+class Golfer < Athlete 
+  def initialize(name, handicap)
+    super(name)
+    @handicap = handicap 
+  end 
+end 
+
+tiger = Golfer.new('Tiger Woods', 1) 
+
+p tiger # => #<Golfer:0x000000010a24fbe8 @name="Tiger Woods", @handicap=1>
+```
+`super` will, by default, forward all arguments passed to the method from which super is called. In order to only send specific arguments up the method lookup path to the superclass, we must explicitly pass them in to `super` as shown above.
+
+- No arguments in superclass method, but one argument in subclass: 
+```ruby 
+class Athlete 
+  def initialize
+    @athletic = true 
+  end 
+end 
+
+class Gymnast < Athlete 
+  def initialize(name, age)
+    super()          # use super() to send zero arguments up method lookup path
+    @name = name 
+    @age = age 
+  end 
+end 
+
+simone = Gymnast.new('Simone', 25)
+
+p simone # => #<Gymnast:0x0000000109e4bc90 @athletic=true, @name="Simone", @age=25>
+```
+In this example, we provide two arguments to the `Gymnast#initialize` method. Within the body of the method, we utilize the `super` keyword to access behavior defined in the superclass `initialize` method, and send no arguments to the superclass method by utilizing the `()` following the keyword  `super`. As a result, we see that when the `simone` object is initialized, we still initialize the `@athletic` instance variable via the superclass, while initializing `Gymnast` specific instance variables according to the arguments provided. 
+
+
+# 
+
+
+# Method lookup path 
+Order in which Ruby inspects classes when resolving a method call. Typically the method lookup path looks like: 
+  - calling object's class
+  - any modules mixed in to the calling object's class 
+  - superclass 
+  - any modules mixed in to superclass 
+  - `Object`
+  - `Kernel`
+  - `BasicObject` 
+
+The method lookup path is determined by the inheritance hierarchy and any mixed in modules throughout the path. 
+
+```ruby 
+module Kickable 
+  def kick_ball 
+    "I'm kicking the ball"
+  end 
+end 
+
+class Athlete 
+  def initialize(name, age)
+    @name = name 
+    @age = age 
+  end 
+
+  def play_sport
+    "I'm playing my sport" 
+  end 
+end 
+
+class Swimmer < Athlete 
+  def initialize(name, age, specialty)
+    super(name, age)
+    @specialty = specialty 
+  end 
+end 
+
+class SoccerPlayer < Athlete
+  include Kickable 
+end 
+
+pele = SoccerPlayer.new("Pele", 80)
+
+pele.kick_ball # method lookup path: [SoccerPlayer, Kickable] 
+
+pele.play_sport # method lookup path: [SoccerPlayer, Kickable, Athlete]
+
+pele.win_game # method lookup path: [SoccerPlayer, Kickable, Athlete, Object, Kernel, BasicObject]  ## will return NoMethod error.
+```
+
+
+#
+
+
+# Method Access Control 
+Method access control allows us to achieve encapsulation in Ruby by managing the accessibility of methods defined in a class. 
+
+By default, instance methods (besides the `initialize` method) are public, and accessible from within anywhere in the program provided the class name, or object name are known.
+
+```ruby 
+class Athlete
+  def play_sport 
+    "Playing my sport!"
+  end 
+end 
+
+tom = Athlete.new
+puts tom.play_sport # => "Playing my sport" 
+```
+In the example above, the `play_sport` instance method is public, and therefore we are able to invoke it `tom` outside of the class. 
+
+### Private methods
+```ruby 
+class Athlete
+  def initialize(name)
+    @name = name 
+  end 
+
+  private 
+
+  attr_reader :name 
+end 
+
+tom = Athlete.new('Tom')
+puts tom.name   # => private method `name' called for #<Athlete:0x0000000109953e18 @name="Tom"> (NoMethodError)
+```
+We are unable to invoke the `play_sport` method from outside of the class as it is listed under the access modifier `private` and therefore only accessible within the class definition by the current object. 
+
+In order to utilize `private` methods within the class, we can do the following: 
+```ruby 
+class Athlete
+  def initialize(name)
+    @name = name 
+  end 
+
+  def introduce_self 
+    "Hi, my name is #{name}"
+  end
+
+  private 
+
+  attr_reader :name 
+end 
+
+tom = Athlete.new('Tom')
+puts tom.introduce_self # => Hi, my name is Tom
+
+puts tom.name # => private method `name' called for #<Athlete:0x0000000109953e18 @name="Tom"> (NoMethodError)
+```
+We can access the `name` getter method from within the class definition, but not outside of it. 
+
+### Protected methods
+Methods that are `protected` are similar to `private` methods in that they are not accessible from outside of the class definition, but provide a greater level of accessibility as they are able to be invoked by all instances of the class, not only the current object. `protected` methods may be used when we need to make some sort of comparison of two objects, but the data we are comparing, we'd like to keep encapsulated within the class, not allowing public access. 
+
+```ruby
+class Pitcher 
+  attr_reader :name 
+
+  def initialize(name, velocity)
+    @name = name 
+    @velocity = velocity 
+  end
+
+  def faster_than?(other)
+    velocity > other.velocity # invoking protected method on two instances of class.
+  end 
+
+  protected 
+  
+  attr_reader :velocity 
+end 
+
+nolan = Pitcher.new('Nolan', 100)
+andy = Pitcher.new('Andy', 85)
+
+puts andy.faster_than?(nolan)  # => false
+puts nolan.faster_than?(andy)  # => true 
+
+puts nolan.velocity # => protected method faster_than, NoMethod error.
+```
+
+
+# 
+
+
+# Collaborator objects
+Collaborator objects are objects that are stored as part of another object's state. Collaborator objects work together in order to accomplish a task. When we talk about collaborator objects, we typically mean custom objects, but collaborator objects can be objects of any type. 
+
+```ruby 
+class Recipe 
+  attr_reader :name, :ingredients 
+
+  def initialize(name)
+    @name = name
+    @ingredients = []
+  end 
+
+  def add_ingredient(ingredient)
+    ingredients << ingredient 
+  end 
+
+  def print_ingredients 
+    "Ingredients for #{name}:"
+    ingredients.each { |ingredient| puts ingredient }
+  end 
+
+  def total_calories 
+    total = 0 
+    ingredients.each { |ingredient| total += ingredient.calories }
+    "#{name} contains #{total} calories" 
+  end 
+end 
+
+class Food
+  attr_reader :type, :calories 
+
+  def initialize(type, calories)
+    @type = type
+    @calories = calories
+  end 
+
+  def to_s 
+    "#{type} with #{calories} calories."
+  end 
+end 
+
+apple_pie = Recipe.new('Apple Pie')
+
+apple = Food.new('Apple', 10)
+
+apple_pie.add_ingredient(apple)
+
+sugar = Food.new("Sugar", 500)
+
+apple_pie.add_ingredient(sugar)
+
+apple_pie.print_ingredients # => Apple with 10 calories.
+                            # => Sugar with 500 calories.  
+
+puts apple_pie.total_calories  # => Apple Pie contains 510 calories
+```
+In the example above, our `Food` objects `apple` and `sugar` are collaborator objects to `apple_pie` as they are stored within the instance variable `@ingredients` as part of the `Recipe` object's state, and help the recipe to achieve a task. 
+
+
+
+
+
+
+
+
+
+
+
+  
 
