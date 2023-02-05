@@ -1,3 +1,6 @@
+# problems from https://medium.com/@marwan.zaarab/rb129-interview-assessment-prep-e2f120330240
+
+
 #1 — What will the following code output? Why?
 
 # class Student
@@ -441,5 +444,441 @@
 # p tom[0] # same as tom.[](0)      # => Amber
 # p tom.friends # => ["Amber", "John"]
 
+
+
+
+
+#16 — Update the Human class to have lines 11 and 14 return the desired output.
+
+# class Human 
+#   attr_reader :name
+
+#   def initialize(name="Dylan")
+#     @name = name
+#   end
+# end
+
+# puts Human.new("Jo").hair_color("blonde")  
+# # Should output "Hi, my name is Jo and I have blonde hair."
+
+# puts Human.hair_color("")              
+# # Should "Hi, my name is Dylan and I have blonde hair."
+
+
+
+# class Human 
+#   attr_reader :name, :hair_color
+
+#   def initialize(name="Dylan")
+#     @name = name
+#   end
+
+#   def hair_color(color)
+#     "Hi my name is #{name} and I have #{color} hair."
+#   end 
+
+#   def self.hair_color(color)
+#     color = color.empty? ? 'blonde' : color 
+#     "Hi, my name is #{self.new.name} and I have #{color} hair."
+#   end 
+# end
+
+# puts Human.new("Jo").hair_color("blonde")  
+# # Should output "Hi, my name is Jo and I have blonde hair."
+
+# puts Human.hair_color("")              
+# Should "Hi, my name is Dylan and I have blonde hair."
+
+# This works, but it is weird practice. 
+
+
+
+
+# Here's how I would implement the class: 
+
+# class Human 
+#   attr_reader :name, :hair_color 
+
+#   @@generic_name = "Dylan"
+
+#   def initialize(name = 'Dylan')
+#     @name = name 
+#   end 
+
+#   def hair_color=(color)
+#     @hair_color = color 
+#   end 
+
+#   def to_s
+#     if hair_color 
+#       "Hi, my name is #{name} and I have #{hair_color} hair."
+#     else 
+#       "Hi, my name is #{name}."
+#     end 
+#   end 
+
+#   def self.hair_color(color)
+#     @@hair_color = color.empty? ? 'blonde' : color 
+#     "Hi, my name is #{@@generic_name} and I have #{@@hair_color} hair."
+#   end 
+# end 
+
+# jo = Human.new('Jo')
+# jo.hair_color = 'blonde'
+# puts jo      # => Hi, my name is Jo and I have blonde hair.
+
+# puts Human.hair_color('') # => Hi, my name is Dylan and I have blonde hair.
+
+# Either way, strange problem and I would not write code like this.
+
+
+
+
+#17 — What does each self refer to in the code snippet below?
+
+# class MeMyselfAndI
+#   self     # => class 
+
+#   def self.me # => class definition
+#     self      # => class
+#   end
+
+#   def myself
+#     self      # => calling object
+#   end
+# end
+
+# i = MeMyselfAndI.new
+
+# self used inside a class but outside of an instance method references the class itself, whereas self used within an instance method references the calling object. self is also used to define class methods. self is utilized in order to be explicit about what is being referenced in the program and changes depending on the context. 
+
+
+
+#18— What are some of the characteristics of instance variables?
+
+# - Instance variables are one way that we tie data to objects, and keep track of an object's state. Each individual instance has its own set of instance variables unique to the object. 
+
+# - Instance variables have a default value of nil until initialized. 
+
+# - Instance variables can be accessed within instance methods without being passed in or initialized within the method. 
+
+# - Instance variables are encapsulated within the object and are not accessible outside of the class. In order to expose, set, or change the value assigned to an instance variable, an interface must be provided. 
+
+
+
+# Problems from SPOT wiki ... not best practice to write code this way, but more for thinking exercises. 
+
+
+
+# Add 1 line of code for the person class
+# and 1 line of code in the initalize method. 
+# Other than that don't change Person.
+
+
+# class Person
+#   def initialize(name, job)
+#       @name = name
+#   end 
+# end
+
+# roger = Person.new("Roger", "Carpenter")
+# puts roger
+
+# Output:
+# "My name is Roger and I am a Carpenter"
+
+
+
+
+# At this point, we are instantiating a new Person object, and passing in two arguments. Within the initialize method, we are only initializing a single instance variable @name, and the second argument is not used. 
+
+# This code would need to be updated to: 
+
+# class Person 
+#   attr_reader :to_s 
+
+#   def initialize(name, job)
+#     @name = name 
+#     @to_s = "My name is #{name} and I am a #{job}."
+#   end 
+# end 
+
+# roger = Person.new("Roger", "Carpenter")
+# puts roger # => "My name is Roger and I am a Carpenter"
+
+
+
+
+
+# give class Barbarian the functionality of the Monster instance attack method:
+  # If you used class inheritance, now try doing it without class inheritance directly.
+  # If you used modules, now try not using modules
+  # If you used duck typing, now don't use duck typing 
+
+# class inheritance 
+  
+# class Monster
+#   def attack
+#     "attacks!"
+#   end
+# end
+  
+# class Barbarian < Monster
+# end
+
+
+# # module (interface inheritance)
+
+# module Attackable 
+#   def attack 
+#     "attacks"
+#   end 
+# end 
+
+# class Barbarian
+#   include Attackable 
+# end 
+
+# class Monster 
+#   include Attackable 
+# end 
+
+
+# # Duck typing 
+
+# class Barbarian 
+#   def attack 
+#     "#{self.class} attacks!"
+#   end 
+# end 
+
+# class Monster 
+#   def attack 
+#     "I'm attacking because I'm a #{self.class}"
+#   end 
+# end 
+
+# conan = Barbarian.new 
+# nessie = Monster.new 
+
+# [conan, nessie].each { |obj| puts obj.attack }
+
+# => Barbarian attacks!
+# => I'm attacking because I'm a Monster
+
+
+
+
+# Without adding any methods below, implement a solution;
+
+# class ClassA 
+#   attr_reader :field1, :field2
+  
+#   def initialize(num)
+#     @field1 = "xyz"
+#     @field2 = num
+#   end
+# end
+
+# class ClassB 
+#   attr_reader :field1
+
+#   def initialize
+#     @field1 = "abc"
+#   end
+# end
+
+
+# obj1 = ClassA.new(50)
+# obj2 = ClassA.new(25)
+# obj3 = ClassB.new
+
+
+# p obj1 > obj2
+# p obj2 > obj3
+
+# # ANSWER
+
+# p obj1.field2 > obj2.field2    # true
+# p obj2.field1 > obj3.field1    # true
+
+
+
+
+
+
+
+# Update the class to receive the proper output.
+
+# class BenjaminButton 
+  
+#   def initialize
+#   end
+  
+#   def get_older
+#   end
+  
+#   def look_younger
+#   end
+  
+#   def die
+#   end
+# end
+
+# benjamin = BenjaminButton.new
+# p benjamin.actual_age # => 0
+# p benjamin.appearance_age # => 100
+
+# benjamin.actual_age = 1
+# p benjamin.actual_age
+
+# benjamin.get_older
+# p benjamin.actual_age # => 2
+# p benjamin.appearance_age # => 99
+
+# benjamin.die
+# p benjamin.actual_age # => 100
+# p benjamin.appearance_age # => 0
+
+
+
+# class BenjaminButton 
+#   attr_accessor :actual_age, :appearance_age
+
+#   def initialize
+#     @actual_age = 0 
+#     @appearance_age = 100 
+#   end 
+
+#   def get_older 
+#     self.actual_age += 1 
+#     self.appearance_age -= 1
+#   end 
+
+#   def die 
+#     self.actual_age = 100
+#     self.appearance_age = 0 
+#   end 
+# end 
+
+
+# benjamin = BenjaminButton.new
+# p benjamin.actual_age # => 0
+# p benjamin.appearance_age # => 100
+
+# benjamin.actual_age = 1
+# p benjamin.actual_age # => 1
+
+# benjamin.get_older
+# p benjamin.actual_age # => 2
+# p benjamin.appearance_age # => 99
+
+# benjamin.die
+# p benjamin.actual_age # => 100
+# p benjamin.appearance_age # => 0
+
+
+
+
+
+
+
+# Add only one line where directed.
+
+# class Wizard
+#   attr_reader :name, :hitpoints
+  
+#   def initialize(name, hitpoints)
+#     @name = name
+#     @hitpoints = hitpoints
+#   end  
+  
+#   def fireball
+#     "casts Fireball for 500 damage!"
+#   end
+# end
+
+# class Summoner < Wizard
+#   attr_reader :souls
+  
+#   def initialize(name, hitpoints)
+#     super(name, hitpoints)          # line added, originally omitted 
+#     @souls = []
+#   end
+  
+#   def soul_steal(character)
+#     @souls << character
+#   end
+# end
+
+# gandolf = Summoner.new("Gandolf", 100)
+# p gandolf.name # => "Gandolf"
+
+# valdimar = Wizard.new("Valdimar", 200)
+# p valdimar.fireball #=> "casts fireball for 500 damage!"
+
+# p gandolf.hitpoints #=> 100
+
+# p gandolf.soul_steal(valdimar) #=> [#<Wizard:0x000055d782470810 @name="Valdimar", @hitpoints=200>]
+
+# p gandolf.souls[0].fireball #=> "casts fireball for 500 damage!"
+
+# This problem demonstrates the use of super to call methods from earlier in the method lookup path. In this case, we are accessing behavior from the Wizard#initialize method by using the super keyword and passing in the relevant arguments to super within the Summoner#initialize method. 
+
+
+
+
+
+# module Flightable
+#   def fly
+#     "I am #{name}, I am a #{self.class.to_s.downcase}, and I can fly"
+#   end
+# end
+
+# class Superhero
+#   include Flightable 
+
+#   attr_accessor :ability
+#   attr_reader :name
+  
+#   def initialize(name)
+#     @name = name
+#   end
+
+#   def announce_ability
+#     puts "I fight crime with my #{ability} ability!"
+#   end
+
+#   def self.fight_crime
+#     puts "I am #{self}!"
+#     announce_ability
+#   end
+
+#   def self.announce_ability
+#     puts "I fight crime with my #{self::ABILITY} ability!"
+#   end 
+# end
+
+# class LSMan < Superhero
+#   ABILITY = 'coding skills'
+# end
+
+# class Ability
+#   attr_reader :description
+
+#   def initialize(description)
+#     @description = description
+#   end
+# end
+
+# superman = Superhero.new('Superman')
+
+# p superman.fly # => I am Superman, I am a superhero, and I can fly!
+
+# coding = Ability.new("coding skills")
+
+# LSMan.fight_crime 
+# # => I am LSMan!
+# # => I fight crime with my coding skills ability!
 
 
