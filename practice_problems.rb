@@ -1283,3 +1283,41 @@
 # puts queue.dequeue == nil
 
 # The above code should display true 15 times.
+
+# more circular buffer practice 
+
+# class Circular 
+#   attr_reader :buffer, :size
+
+#   def initialize(size)
+#     @size = size 
+#     @buffer = []
+#   end 
+
+#   def add_to_buffer(obj)
+#     remove_oldest if buffer.size == size 
+#     buffer << obj
+#   end 
+
+#   def remove_oldest 
+#     return nil if buffer.empty?
+#     buffer.shift 
+#   end 
+# end 
+
+# rad = Circular.new(3)
+
+# rad.add_to_buffer("a")
+# rad.add_to_buffer("b")
+# p rad.buffer            # => ["a", "b"]
+
+# rad.add_to_buffer("c")
+# p rad.buffer            # => ["a", "b", "c"]
+
+# rad.add_to_buffer("d") 
+# p rad.buffer            # => ["b", "c", "d"]
+
+# p rad.remove_oldest     # => "b"
+# p rad.remove_oldest     # => "c"
+
+# p rad.buffer            # => ["d"]
