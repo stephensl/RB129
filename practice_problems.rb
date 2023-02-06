@@ -996,3 +996,290 @@
 
 
 
+
+
+# Medium Exercises 
+
+# Modify this class so both flip_switch and the setter method switch= are private methods.
+
+# class Machine
+#   attr_writer :switch
+
+#   def start
+#     self.flip_switch(:on)
+#   end
+
+#   def stop
+#     self.flip_switch(:off)
+#   end
+
+#   def flip_switch(desired_state)
+#     self.switch = desired_state
+#   end
+# end
+
+
+# Answer: 
+
+# class Machine
+#   def start
+#     flip_switch(:on)
+#   end
+
+#   def stop
+#     flip_switch(:off)
+#   end
+
+#   def switch_status
+#     switch 
+#   end 
+
+#   private 
+
+#   attr_accessor :switch
+
+#   def flip_switch(desired_state)
+#     self.switch = desired_state
+#   end
+# end
+
+# mine = Machine.new 
+# mine.start 
+# mine.stop 
+
+# p mine.switch_status
+
+
+
+
+# Write a class that implements a fixed-length array, and provides the necessary methods to support the following code:
+
+# fixed_array = FixedArray.new(5)
+# puts fixed_array[3] == nil
+# puts fixed_array.to_a == [nil] * 5
+
+# fixed_array[3] = 'a'
+# puts fixed_array[3] == 'a'
+# puts fixed_array.to_a == [nil, nil, nil, 'a', nil]
+
+# fixed_array[1] = 'b'
+# puts fixed_array[1] == 'b'
+# puts fixed_array.to_a == [nil, 'b', nil, 'a', nil]
+
+# fixed_array[1] = 'c'
+# puts fixed_array[1] == 'c'
+# puts fixed_array.to_a == [nil, 'c', nil, 'a', nil]
+
+# fixed_array[4] = 'd'
+# puts fixed_array[4] == 'd'
+# puts fixed_array.to_a == [nil, 'c', nil, 'a', 'd']
+# puts fixed_array.to_s == '[nil, "c", nil, "a", "d"]'
+
+# puts fixed_array[-1] == 'd'
+# puts fixed_array[-4] == 'c'
+
+# begin
+#   fixed_array[6]
+#   puts false
+# rescue IndexError
+#   puts true
+# end
+
+# begin
+#   fixed_array[-7] = 3
+#   puts false
+# rescue IndexError
+#   puts true
+# end
+
+# begin
+#   fixed_array[7] = 3
+#   puts false
+# rescue IndexError
+#   puts true
+# end
+
+#The above code should output true 16 times.
+
+
+# class FixedArray 
+#   attr_reader :array 
+
+#   def initialize(size)
+#     @size = size 
+#     @array = Array.new(size)
+#   end 
+
+#   def [](index)
+#     array.fetch(index)
+#   end 
+
+#   def []=(index, value)
+#     self[index]           # raises error if index invalid 
+#     array[index] = value 
+#   end 
+
+#   def to_a 
+#     array.clone
+#   end 
+
+#   def to_s 
+#     to_a.to_s 
+#   end 
+# end
+
+
+
+
+# Below we have 3 classes: Student, Graduate, and Undergraduate. The implementation details for the #initialize methods in Graduate and Undergraduate are missing. Fill in those missing details so that the following requirements are fulfilled:
+
+#     Graduate students have the option to use on-campus parking, while Undergraduate students do not.
+
+#     Graduate and Undergraduate students both have a name and year associated with them.
+
+# Note, you can do this by adding or altering no more than 5 lines of code.
+
+# class Student
+#   def initialize(name, year)
+#     @name = name
+#     @year = year
+#   end
+# end
+
+# class Graduate
+#   def initialize(name, year, parking)
+#   end
+# end
+
+# class Undergraduate
+#   def initialize(name, year)
+#   end
+# end
+
+
+
+# ANSWER 
+
+# class Student
+#   def initialize(name, year)
+#     @name = name
+#     @year = year
+#   end
+# end
+
+# class Graduate < Student
+#   def initialize(name, year, parking)
+#     super(name, year)
+#     @parking = parking 
+#   end
+# end
+
+# class Undergraduate < Student ; end
+
+# Can you think of a way to use super() in another Student related class?
+
+# class Student
+#   def initialize(name, year)
+#     @name = name
+#     @year = year
+#   end
+
+#   def take_class 
+#     "I am a(n) #{self.class} taking a class"
+#   end 
+# end
+
+# class Graduate < Student
+#   def initialize(name, year, parking)
+#     super(name, year)
+#     @parking = parking 
+#   end
+# end
+
+# class Undergraduate < Student ; end
+
+# class Auditor < Student 
+#   def take_class(subject)
+#     super() + " in #{subject}"
+#   end 
+# end 
+
+# tom = Auditor.new('Tom', 2023)
+# puts tom.take_class('History')   
+  # => I am a(n) Auditor taking a class in History
+
+
+
+
+#   Your task is to write a CircularQueue class that implements a circular queue for arbitrary objects. The class should obtain the buffer size with an argument provided to CircularQueue::new, and should provide the following methods:
+
+#   enqueue to add an object to the queue
+#   dequeue to remove (and return) the oldest object in the queue. It should return nil if the queue is empty.
+
+# You may assume that none of the values stored in the queue are nil (however, nil may be used to designate empty spots in the buffer).
+
+
+# class CircularQueue
+#   attr_reader :size, :buffer
+
+#   def initialize(size)
+#     @size = size 
+#     @buffer = []
+#   end 
+
+#   def enqueue(num)
+#     dequeue if buffer.size == size 
+#     buffer << num 
+#   end 
+
+#   def dequeue
+#     return nil if buffer.empty?
+#     buffer.shift 
+#   end 
+# end 
+
+
+
+
+# queue = CircularQueue.new(3)
+# puts queue.dequeue == nil
+
+# queue.enqueue(1)
+# queue.enqueue(2)
+# puts queue.dequeue == 1
+
+
+# queue.enqueue(3)
+# queue.enqueue(4)
+# puts queue.dequeue == 2
+
+
+# queue.enqueue(5)
+# queue.enqueue(6)
+# queue.enqueue(7)
+# puts queue.dequeue == 5
+# puts queue.dequeue == 6
+# puts queue.dequeue == 7
+# puts queue.dequeue == nil
+
+# queue = CircularQueue.new(4)
+# puts queue.dequeue == nil
+
+# queue.enqueue(1)
+# queue.enqueue(2)
+# puts queue.dequeue == 1
+
+# queue.enqueue(3)
+# queue.enqueue(4)
+# puts queue.dequeue == 2
+
+# queue.enqueue(5)
+# queue.enqueue(6)
+# queue.enqueue(7)
+# puts queue.dequeue == 4
+# puts queue.dequeue == 5
+# puts queue.dequeue == 6
+# puts queue.dequeue == 7
+# puts queue.dequeue == nil
+
+# The above code should display true 15 times.
