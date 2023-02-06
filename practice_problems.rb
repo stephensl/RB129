@@ -882,3 +882,117 @@
 # # => I fight crime with my coding skills ability!
 
 
+
+
+
+
+
+
+####
+
+
+# More practice 
+
+
+# An animal shelter receives pets and facilitates adoptions of pets. Create an application that tracks data relative to the operation of the shelter.
+
+
+# Spike practicing with multi line strings and %{} syntax versus " ". 
+
+# class Shelter 
+#   attr_reader :name, :current_residents
+  
+#   def initialize(name)
+#     @name = name 
+#     @current_residents = []
+#   end
+
+#   def check_in(pet)
+#     @current_residents << pet
+#   end 
+
+#   def check_out(pet)
+#     @current_residents.delete(pet)
+#   end 
+
+#   def print_current_residents
+#     puts %{Current Residents at #{name}:}
+#     puts %{-----------------------------}
+#     current_residents.each do |resident|
+#       puts resident
+#     end 
+#   end 
+  
+# end
+
+
+# class Owner 
+#   attr_reader :name, :pets
+  
+#   def initialize(name)
+#     @name = name 
+#     @pets = []
+#   end 
+
+#   def adopt(pet)
+#     @pets << pet 
+#   end 
+
+#   def print_pets
+#     puts "**#{name}'s Pets **"
+#     puts "-------------------"
+#     puts pets 
+#   end 
+
+# end 
+
+# class Pet
+#   attr_reader :name, :species
+#   def initialize(name, species)
+#     @name = name 
+#     @species = species
+#   end 
+
+#   def to_s 
+#     %[* A #{species} named #{name}]
+#   end 
+# end 
+
+
+# good_hands = Shelter.new("Good Hands")
+
+# louie = Pet.new("Louie", "Dog" )
+
+# phil = Owner.new("Phil")
+
+# good_hands.check_in(louie)
+
+# good_hands.print_current_residents
+
+# phil.adopt(louie)
+
+# good_hands.check_out(louie)
+
+# zuzu = Pet.new("Zuzu", "Dog")
+
+# phil.adopt(zuzu)
+
+# good_hands.check_out(zuzu)
+
+# phil.print_pets
+
+# => 
+
+  # Current Residents at Good Hands:
+  # -----------------------------
+  # * A Dog named Louie
+
+
+  # **Phil's Pets **
+  # -------------------
+  # * A Dog named Louie
+  # * A Dog named Zuzu
+
+
+
+
