@@ -1420,10 +1420,12 @@
 # - Cheese
 
 
+
+
 # Why is it generally safer to invoke a setter method (if available) vs. referencing the instance variable directly when trying to set an instance variable within the class? Give an example
 
 # class Fruit 
-#   attr_accessor :status 
+#   attr_reader :status 
 
 #   def initialize(type)
 #     @type = type 
@@ -1431,7 +1433,7 @@
 #   end 
 
 #   def ripen 
-#     self.staatus = 'ripe'
+#     @status = 'ripe'
 #   end 
 # end 
 
@@ -1475,6 +1477,43 @@
 
 # In this case we are provided a lovely error message to alert us of our typo error. 
 
-
 # Utilizing the setter method rather than accessing the instance variable directly is also useful if we want to perform any kind of validation (new value coming from user) or formatting to the newly set value. 
+
+
+
+# Exploring protected methods 
+
+
+class Food 
+  def initialize(calories)
+    @calories = calories 
+  end 
+
+  def ==(other)
+    calories == other.calories 
+  end 
+
+  protected 
+
+  attr_reader :calories 
+end 
+
+class Drink 
+  
+
+  def initialize(calories)
+    @calories = calories 
+  end 
+
+  protected 
+
+  attr_reader :calories 
+end 
+    
+
+coke = Drink.new(100)
+burger = Food.new(100)
+
+p burger == coke 
+
 
