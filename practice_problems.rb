@@ -1321,3 +1321,160 @@
 # p rad.remove_oldest     # => "c"
 
 # p rad.buffer            # => ["d"]
+
+
+
+
+# What will be output and why?
+
+# class Cat
+#   attr_reader :name, :color
+
+#   def initialize(name)
+#     @name = name
+#   end
+
+#   def dye_in_blue
+#     @color = 'blue'
+#   end
+# end
+
+# kitty = Cat.new('Kitty')
+# p kitty.color            
+
+
+# Returns nil because the instance variable @color is never initialized. Instance variables have a default value of nil until initialized. 
+
+
+# What will be output and why?
+
+# class Dog
+#   def initialize(name)
+#     @name = name
+#   end
+# end
+
+# puppy = Dog.new('Bengi')
+# another_puppy = Dog.new('Benji')
+
+# p puppy == another_puppy    # => false 
+
+# Because the Dog class does not define a Dog#== method, when invoked on puppy, Ruby traverses the method lookup path [Dog, Object, Kernel, BasicObject] and invokes the inherited BasicObject#== method which compares whether the two objects in question are the same object. In order to provide a class specific implementation we must override the inherited BasicObject#== method. 
+
+  # additions to above code 
+
+  # attr_reader :name 
+
+  # def ==(other)
+  #   name == other.name 
+  # end 
+
+# This would return false as well, as we are utilizing String#== which examines whether the two objects have the same value. In this case, the values assigned to instance variable @name for each object. 
+
+
+# class Recipe 
+#   attr_reader :name 
+
+#   def initialize(name)
+#     @name = name 
+#     @ingredients = []
+#   end 
+
+#   def <<(ingredient)
+#     @ingredients << ingredient 
+#   end 
+
+#   def cook 
+#     puts "I've prepared a #{name} recipe with: "
+#     @ingredients.each { |item| puts "- #{item}" }
+#   end 
+# end 
+
+# class Food 
+#   attr_reader :type 
+
+#   def initialize(type)
+#     @type = type 
+#   end 
+
+#   def to_s 
+#     "#{type.capitalize}"
+#   end 
+# end 
+
+# class Veggie < Food ; end 
+
+# class Meat < Food ; end 
+
+# lasagna = Recipe.new('Lasagna')
+# lasagna << Veggie.new('squash')
+# lasagna << Meat.new('beef')
+# lasagna << Food.new('cheese')
+
+# lasagna.cook
+
+# => 
+# I've prepared a Lasagna recipe with: 
+# - Squash
+# - Beef
+# - Cheese
+
+
+# Why is it generally safer to invoke a setter method (if available) vs. referencing the instance variable directly when trying to set an instance variable within the class? Give an example
+
+# class Fruit 
+#   attr_accessor :status 
+
+#   def initialize(type)
+#     @type = type 
+#     @status = 'unripe'
+#   end 
+
+#   def ripen 
+#     self.staatus = 'ripe'
+#   end 
+# end 
+
+# apple = Fruit.new('apple')
+# p apple.status            # => unripe 
+# apple.ripen             
+# p apple.status            # => ripe 
+# p apple 
+
+
+# This works fine, but a small typo can introduce a subtle bug.
+
+
+# # < code omitted for brevity >
+
+# def ripen 
+#   @staatus = 'ripe'
+# end 
+
+# p apple.status            # => unripe 
+# apple.ripen             
+# p apple.status            # => unripe 
+
+# Above, we see that the @status instance variable is not reassigned to 'ripe' following the call to ripen. And.. we also added another instance variable to our object's state...
+
+# p apple  #<Fruit:0x000000010af91608 @type="apple", @status="unripe", @staatus="ripe">
+
+# We unintentionally initialize a new instance variable rather than setting the one we intended. This is valid code, so no error was thrown to notify you about the bug. 
+
+# Conversely, if we used a setter method with the same typo... 
+
+# attr_writer :status 
+
+# # < code omitted for brevity >
+
+# def ripen 
+#   self.staatus = 'ripe'
+# end 
+
+# => undefined method `staatus=' for #<Fruit:0x00000001019cf728 @type="apple", @status="unripe"> (NoMethodError)
+
+# In this case we are provided a lovely error message to alert us of our typo error. 
+
+
+# Utilizing the setter method rather than accessing the instance variable directly is also useful if we want to perform any kind of validation (new value coming from user) or formatting to the newly set value. 
+
